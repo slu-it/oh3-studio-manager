@@ -1,1 +1,1 @@
-rootProject.name = "spring-boot-service"
+rootProject.name = "oh3-studio-manager"

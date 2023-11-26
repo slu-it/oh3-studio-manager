@@ -37,7 +37,7 @@ server:
 
 spring:
   application:
-    name: spring-boot-service
+    name: oh3-studio-manager
   jackson:
     default-property-inclusion: non_null
 

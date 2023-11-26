@@ -1,4 +1,4 @@
-= Spring Boot Service
+= OH3 Studio Manager
 
 Lorem Ipsum
 
