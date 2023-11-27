@@ -1,0 +1,8 @@
+POST http://localhost:8080/api/admin/studios/{{number}}/rent
+Accept: application/json
+Content-Type: application/json
+Authorization: Basic dXNlcjpyZXN1
+
+{
+  "until": "2023-11-27T00:30:00.000Z"
+}

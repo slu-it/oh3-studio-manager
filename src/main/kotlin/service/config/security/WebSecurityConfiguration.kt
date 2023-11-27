@@ -17,7 +17,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
 import service.config.security.Authorities.SCOPE_ACTUATOR
-import service.config.security.Authorities.SCOPE_API
+import service.config.security.Authorities.SCOPE_ADMIN
 
 @Configuration
 @EnableWebSecurity
@@ -51,7 +51,8 @@ class WebSecurityConfiguration {
 
             httpBasic {}
             authorizeRequests {
-                authorize("/api/**", hasAuthority(SCOPE_API))
+                authorize("/api/admin/**", hasAuthority(SCOPE_ADMIN))
+                authorize("/api/view/**", permitAll)
                 authorize("/error", permitAll)
                 authorize(anyRequest, denyAll)
             }
@@ -70,7 +71,7 @@ class WebSecurityConfiguration {
     @Bean
     fun userDetailService(): UserDetailsService =
         InMemoryUserDetailsManager(
-            dummyUser("user", SCOPE_API),
+            dummyUser("user", SCOPE_ADMIN),
             dummyUser("actuator", SCOPE_ACTUATOR)
         )
 

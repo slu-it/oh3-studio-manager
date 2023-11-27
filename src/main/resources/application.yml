@@ -1,3 +1,6 @@
+application:
+  number-of-studios: 3
+
 logbook:
   exclude:
     - /actuator/health/**
