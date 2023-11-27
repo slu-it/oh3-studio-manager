@@ -1,25 +1,27 @@
 package service.business.model
 
+import service.business.model.DisplayInformation.Rented
+import service.business.model.DisplayInformation.Rented.OverTime
 import java.math.BigDecimal
-import java.math.RoundingMode
+import java.math.RoundingMode.HALF_UP
 import java.time.Duration
 import java.time.Instant
 
 data class DisplayInformation(
-    val number: Int,
-    val rented: RentingData? = null,
-    val overtime: OvertimeData? = null,
-)
-
-data class RentingData(
-    val until: Instant,
-    val timeLeft: Duration,
-)
-
-data class OvertimeData(
-    val amount: Duration,
-    val fee: BigDecimal,
-)
+    val studioNumber: Int,
+    val rented: Rented? = null,
+) {
+    data class Rented(
+        val until: Instant,
+        val timeLeft: Duration,
+        val overTime: OverTime? = null,
+    ) {
+        data class OverTime(
+            val by: Duration,
+            val fee: BigDecimal,
+        )
+    }
+}
 
 fun Studio.toDisplayInformation(now: Instant): DisplayInformation =
     when (this) {
@@ -33,25 +35,27 @@ private fun displayInformation(studio: AvailableStudio) =
 private fun displayInformation(studio: RentedStudio, now: Instant): DisplayInformation {
     val until = studio.rentedUntil
 
-    val isOvertime = now > until
-    val timeLeft = if (isOvertime) Duration.ofSeconds(0) else Duration.between(now, until)
+    val isOverTime = now > until
+    val timeLeft = if (isOverTime) Duration.ofSeconds(0) else Duration.between(now, until)
 
     return DisplayInformation(
-        number = studio.number,
-        rented = RentingData(until, timeLeft),
-        overtime = if (isOvertime) overtimeData(until, now, studio) else null
+        studioNumber = studio.number,
+        rented = Rented(
+            until = until,
+            timeLeft = timeLeft,
+            overTime = if (isOverTime) overtimeData(until, now, studio) else null
+        )
     )
 }
 
-private fun overtimeData(until: Instant, now: Instant, studio: RentedStudio): OvertimeData {
+private fun overtimeData(until: Instant, now: Instant, studio: RentedStudio): OverTime {
     val overtime = Duration.between(until, now)
-    val factor = overtime.dividedBy(studio.overtimeFees.per)
-    val feeInEuros = studio.overtimeFees.euros * factor
-    return OvertimeData(
-        amount = overtime,
-        fee = currencyAmount(feeInEuros)
-    )
+    val factor = overtime.dividedBy(studio.overTimeFee.per)
+    val feeInEuros = studio.overTimeFee.euros.multiply(BigDecimal(factor))
+
+    return OverTime(by = overtime, fee = toMonetaryAmount(feeInEuros))
 }
 
-private fun currencyAmount(rawFee: Double): BigDecimal =
-    BigDecimal(rawFee).setScale(2, RoundingMode.HALF_UP)
+private fun toMonetaryAmount(feeInEuros: BigDecimal): BigDecimal =
+    feeInEuros.setScale(2, HALF_UP)
+

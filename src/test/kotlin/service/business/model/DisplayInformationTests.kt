@@ -4,6 +4,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import service.business.model.DisplayInformation.Rented
+import service.business.model.DisplayInformation.Rented.OverTime
 import java.math.BigDecimal
 import java.time.Duration.ofMinutes
 import java.time.Duration.ofSeconds
@@ -18,11 +20,7 @@ class DisplayInformationTests {
         val displayInformation = studio.toDisplayInformation(now)
 
         assertThat(displayInformation).isEqualTo(
-            DisplayInformation(
-                number = 1,
-                rented = null,
-                overtime = null
-            )
+            DisplayInformation(studioNumber = 1)
         )
     }
 
@@ -34,19 +32,18 @@ class DisplayInformationTests {
         fun `in time case is calculated correctly`() {
             val now = parse("2023-11-27T12:34:56.789Z")
             val until = parse("2023-11-27T13:00:00.000Z")
-            val fees = OvertimeFees(0.5, ofMinutes(1))
+            val fees = OverTimeFee(BigDecimal(0.5), ofMinutes(1))
 
-            val studio = RentedStudio(number = 2, rentedUntil = until, overtimeFees = fees)
+            val studio = RentedStudio(number = 2, rentedUntil = until, overTimeFee = fees)
             val displayInformation = studio.toDisplayInformation(now)
 
             assertThat(displayInformation).isEqualTo(
                 DisplayInformation(
-                    number = 2,
-                    rented = RentingData(
+                    studioNumber = 2,
+                    rented = Rented(
                         until = until,
-                        timeLeft = ofMinutes(25).plusSeconds(3).plusMillis(211)
-                    ),
-                    overtime = null
+                        timeLeft = ofMinutes(25).plusSeconds(3).plusMillis(211),
+                    )
                 )
             )
         }
@@ -55,22 +52,22 @@ class DisplayInformationTests {
         fun `over time case is calculated correctly`() {
             val now = parse("2023-11-27T12:34:56.789Z")
             val until = parse("2023-11-27T12:15:00.000Z")
-            val fees = OvertimeFees(0.5, ofMinutes(1))
+            val fees = OverTimeFee(BigDecimal(0.5), ofMinutes(1))
 
-            val studio = RentedStudio(number = 3, rentedUntil = until, overtimeFees = fees)
+            val studio = RentedStudio(number = 3, rentedUntil = until, overTimeFee = fees)
             val displayInformation = studio.toDisplayInformation(now)
 
             assertThat(displayInformation).isEqualTo(
                 DisplayInformation(
-                    number = 3,
-                    rented = RentingData(
+                    studioNumber = 3,
+                    rented = Rented(
                         until = until,
-                        timeLeft = ofSeconds(0)
+                        timeLeft = ofSeconds(0),
+                        overTime = OverTime(
+                            by = ofMinutes(19).plusSeconds(56).plusMillis(789),
+                            fee = BigDecimal("9.50")
+                        )
                     ),
-                    overtime = OvertimeData(
-                        amount = ofMinutes(19).plusSeconds(56).plusMillis(789),
-                        fee = BigDecimal("9.50")
-                    )
                 )
             )
         }

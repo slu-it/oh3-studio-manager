@@ -1,16 +1,11 @@
 package service.config.security
 
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
-import org.springframework.boot.actuate.health.HealthEndpoint
-import org.springframework.boot.actuate.info.InfoEndpoint
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.web.HttpSecurityDsl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
-import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
@@ -26,24 +21,6 @@ class WebSecurityConfiguration {
     private val passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder()
 
     @Bean
-    @Order(1)
-    fun actuatorSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http {
-            securityMatcher(EndpointRequest.toAnyEndpoint())
-            applyDefaults()
-
-            httpBasic {}
-            authorizeRequests {
-                authorize(EndpointRequest.to(InfoEndpoint::class.java, HealthEndpoint::class.java), permitAll)
-                authorize(EndpointRequest.toAnyEndpoint(), hasAuthority(SCOPE_ACTUATOR))
-                authorize(anyRequest, denyAll)
-            }
-        }
-        return http.build()
-    }
-
-    @Bean
-    @Order(2)
     fun generalSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http {
             securityMatcher("/**")
@@ -53,6 +30,8 @@ class WebSecurityConfiguration {
             authorizeRequests {
                 authorize("/api/admin/**", hasAuthority(SCOPE_ADMIN))
                 authorize("/api/view/**", permitAll)
+                authorize("/view/**", permitAll)
+                authorize("/resources/**", permitAll)
                 authorize("/error", permitAll)
                 authorize(anyRequest, denyAll)
             }
@@ -63,9 +42,6 @@ class WebSecurityConfiguration {
     private fun HttpSecurityDsl.applyDefaults() {
         cors { disable() }
         csrf { disable() }
-        sessionManagement {
-            sessionCreationPolicy = SessionCreationPolicy.STATELESS
-        }
     }
 
     @Bean

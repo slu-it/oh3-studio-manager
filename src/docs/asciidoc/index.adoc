@@ -1,8 +1,0 @@
-= OH3 Studio Manager
-
-Lorem Ipsum
-
-== Index
-
-* link:api.html[API Documentation]
-* link:domain.adoc[Domain Documentation]

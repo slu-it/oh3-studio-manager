@@ -1,3 +1,0 @@
-= OH3 Studio Manager - API Documentation
-
-Lorem Ipsum

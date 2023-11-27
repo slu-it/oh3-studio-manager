@@ -1,0 +1,34 @@
+body {
+    background: black;
+    color: limegreen;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    font-size: 5em;
+}
+
+.rented-until {
+    font-size: 3em;
+}
+
+#under-time {
+    font-size: 3em;
+    .time-left {
+        color: limegreen;
+    }
+}
+
+#over-time {
+    font-size: 3em;
+    .time-left {
+        color: red;
+    }
+    .over-time-by {
+
+    }
+    .over-time-fee {
+        color: red;
+    }
+}

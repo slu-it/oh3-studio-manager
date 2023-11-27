@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de" th:lang="${language}" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="refresh" content="1">
+    <link href="/resources/css/styles.css" rel="stylesheet"/>
+    <title th:text="'OH3 Studio #' + ${info.studioNumber}">OH3 Studio 0</title>
+</head>
+<body>
+
+<h1 th:text="'OH3 Studio #' + ${info.studioNumber}"></h1>
+
+<div th:if="${info.rented != null}">
+
+    <div class="rented-until">Rented until <span th:text="${{info.rented.until}}"></span></div>
+
+    <br>
+
+    <div id="under-time" th:if="${info.rented.overTime == null}">
+        <div class="time-left"><span th:text="${{info.rented.timeLeft}}"></span></div>
+    </div>
+
+    <div id="over-time" th:if="${info.rented.overTime != null}">
+        <div class="time-left"><span th:text="${{info.rented.timeLeft}}"></span></div>
+        <br>
+        <div class="over-time-by" th:text="'Over Time: ' + ${{info.rented.overTime.by}}"></div>
+        <div class="over-time-fee" th:text="'Extra Fee: ' + ${{info.rented.overTime.fee}} + ' €'"></div>
+    </div>
+
+</div>
+
+</body>
+</html>
