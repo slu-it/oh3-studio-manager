@@ -27,6 +27,9 @@ class StudioManager(
         }
     }
 
+    fun getAll(): List<Studio> =
+        database.values.toList()
+
     fun get(number: Int): Studio? =
         database[number]
 
@@ -40,7 +43,7 @@ class StudioManager(
             )
         )
 
-    fun unblock(number: Int): Studio? =
+    fun reset(number: Int): Studio? =
         updateStudio(
             number = number,
             studio = AvailableStudio(

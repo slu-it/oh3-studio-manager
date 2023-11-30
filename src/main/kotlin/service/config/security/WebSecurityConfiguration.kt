@@ -28,8 +28,8 @@ class WebSecurityConfiguration {
 
             httpBasic {}
             authorizeRequests {
-                authorize("/api/admin/**", hasAuthority(SCOPE_ADMIN))
-                authorize("/api/view/**", permitAll)
+                authorize("/admin", hasAuthority(SCOPE_ADMIN))
+                authorize("/admin/**", hasAuthority(SCOPE_ADMIN))
                 authorize("/view/**", permitAll)
                 authorize("/resources/**", permitAll)
                 authorize("/error", permitAll)
